@@ -5,6 +5,9 @@ import (
 	"testing"
 	"time"
 
+	//_ "github.com/coscms/session-sqlitestore/driver"
+	//_ "github.com/coscms/session-sqlitestore/driver/cgo"
+	_ "github.com/coscms/session-sqlitestore/driver/go"
 	sqlstore "github.com/coscms/session-sqlstore"
 	"github.com/stretchr/testify/require"
 )

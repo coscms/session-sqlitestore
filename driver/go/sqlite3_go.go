@@ -1,5 +1,3 @@
-//go:build sqlitego || session_sqlitego
-
 package sqlite3
 
 import (
