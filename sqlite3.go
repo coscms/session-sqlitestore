@@ -2,7 +2,11 @@ package sqlite3
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
+	"path/filepath"
+	"time"
 
 	"github.com/admpub/sessions"
 	sqlstore "github.com/coscms/session-sqlstore"
@@ -24,7 +28,7 @@ func New(cfg *Options) sessions.Store {
 }
 
 func Reg(store sessions.Store, args ...string) {
-	name := `sqlite3`
+	name := `sqlite`
 	if len(args) > 0 {
 		name = args[0]
 	}
@@ -54,17 +58,22 @@ const DDL = "CREATE TABLE IF NOT EXISTS %s (" +
 	"	`expires` int NOT NULL DEFAULT '0');"
 
 // NewSQLiteStore takes the following paramaters
-// endpoint - A sql.Open style endpoint
-// tableName - table where sessions are to be saved. Required fields are created automatically if the table doesnot exist.
 // path - path for Set-Cookie header
-// maxAge
-// codecs
 func NewSQLiteStore(cfg *Options) (*SQLiteStore, error) {
-	db, err := sql.Open("sqlite3", cfg.Path)
+	var uri string
+	if len(cfg.Path) == 0 {
+		d := fmt.Sprintf("%d-session", time.Now().Unix())
+		uri = filepath.Join(os.TempDir(), d, "sessions.db")
+		os.MkdirAll(filepath.Dir(uri), 0755)
+		uri += `?tmp=true`
+	} else {
+		os.MkdirAll(filepath.Dir(cfg.Path), 0755)
+		uri = cfg.Path
+	}
+	db, err := sql.Open("sqlite3", "file:"+uri)
 	if err != nil {
 		return nil, err
 	}
-
 	return NewSQLiteStoreFromConnection(db, cfg)
 }
 
