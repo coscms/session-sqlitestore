@@ -1,4 +1,4 @@
-//go:build sqlitego || session_sqlitego
+//go:build !sqlitecgo
 
 package driver
 
